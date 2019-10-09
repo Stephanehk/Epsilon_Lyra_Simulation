@@ -13,14 +13,17 @@ earth_mass = 5.972e24
 #velocity of earth around the sun
 earth_sun_v =30000
 #--------------------------------------------------------------------------------------------
-#fix later
-orbital_period_1 = 79.91*365*24*3600*0.51 #in seconds
-distance_between_stars1 = 5.326e+12
+orbital_period_1 = 5.6903874e+10 #AB PERIOD
+#79.91*365*24*3600*0.51 #in seconds
+distance_between_stars1 = 17400000000
+#5.326e+12
 K1_1 = (G*orbital_period_1*sun_mass)/(np.power(distance_between_stars1,2) * earth_sun_v)
 K2_1 = (earth_sun_v*orbital_period_1)/distance_between_stars1
 #--------------------------------------------------------------------------------------------
-orbital_period_2 = 79.91*365*24*3600*0.51 #in seconds
-distance_between_stars2 = 5.326e+12
+orbital_period_2 = 2.2841746e+10 #CD PERIOD
+#79.91*365*24*3600*0.51 #in seconds
+distance_between_stars2 = 18150000000
+#5.326e+12
 K1_2 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
 K2_2 = (earth_sun_v*orbital_period_2)/distance_between_stars2
 #--------------------------------------------------------------------------------------------
@@ -51,8 +54,8 @@ def calculate_2_body (initial_conditions,t,m1,m2, K1, K2):
     return all_derivs
 
 def double_star_system (m1,m2,r1,r2, K1,K2, plot):
-    m1 = m1/earth_mass
-    m2 = m2/earth_mass
+    m1 = m1/sun_mass
+    m2 = m2/sun_mass
     e = 0.8
     G = 6.67408e-11
     #find position of center of mass
@@ -93,6 +96,7 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
         plt.show()
     return r_1_pos, r_2_pos, r_com
 
+
 def plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2):
     fig=plt.figure(figsize=(10,10))
     ax=fig.add_subplot(111,projection="3d")
@@ -119,25 +123,24 @@ def plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_syste
     # ax.scatter(total_system_r2[-1,0],total_system_r2[-1,1],total_system_r2[-1,2],color="k",marker="X",s=100,label="Star_System_2")
 
     plt.show()
-
-
 #------------------------------DOUBLE SYSTEM CALCULATIONS--------------------------------------------
-m1 = 7.3e24
-m2 = 6.8e24
+m1 = 4.06e+30
+m2 = 3.22e+30
 
-m3 = 7.3e24
-m4 = 6.8e24
+m3 = 4.22e+30
+m4 = 4.3e+30
 system1_r1, system1_r2, system1_com = double_star_system (m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, False)
-system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, False)
+system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, True)
 
 #------------------------------TOTAL SYSTEM CALCULATION--------------------------------------------
-
-#------------------------------MORE CONSTANTS-------------------------------------------------------
-orbital_period_3 = 79.91*365*24*3600*0.51 #in seconds
-distance_between_stars3 = LA.norm(system2_com - system1_com)
-K1_3 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
-K2_3 = (earth_sun_v*orbital_period_2)/distance_between_stars2
-
+#
+# #------------------------------MORE CONSTANTS-------------------------------------------------------
+# orbital_period_3 = 79.91*365*24*3600*0.51 #in seconds
+# distance_between_stars3 = 1.575e+12
+# #LA.norm(system2_com - system1_com)
+# K1_3 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
+# K2_3 = (earth_sun_v*orbital_period_2)/distance_between_stars2
+#
 # #--------------------------------------------------------------------------------------------
-total_system_r1, total_system_r2, total_system_com = double_star_system (m1+m2,m3+m4,system1_com,system2_com, K1_3, K2_3, False)
-plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2)
+# total_system_r1, total_system_r2, total_system_com = double_star_system (m1+m2,m3+m4,system1_com,system2_com, K1_3, K2_3, False)
+# #plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2)
