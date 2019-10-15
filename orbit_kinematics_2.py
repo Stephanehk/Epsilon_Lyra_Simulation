@@ -5,6 +5,8 @@ import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+import orbit_evaluator
+
 #------------------------------BIG LIST OF CONSTANTS--------------------------------------------
 G = 6.67408e-11
 #sun mass
@@ -83,10 +85,17 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
     r_2_pos = r_2_pos - r_com_final
 
     if plot:
-        fig=plt.figure(figsize=(10,10))
-        ax=fig.add_subplot(111,projection="3d")
+        linear_reg = orbit_evaluator.SLR(r_1_pos)
 
+        fig=plt.figure(figsize=(8,8))
+        ax=fig.add_subplot(111,projection="3d")
+        #ax.margins(0,0.25,0)
         ax.plot(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],color="darkblue")
+
+        #plot linear Regression
+        #ax.plot(*linear_reg,color = 'r')
+
+
         ax.plot(r_2_pos[:,0],r_2_pos[:,1],r_2_pos[:,2],color="tab:red")
         ax.scatter(r_1_pos[-1,0],r_1_pos[-1,1],r_1_pos[-1,2],color="darkblue",marker="o",s=100,label="Star1")
         ax.scatter(r_2_pos[-1,0],r_2_pos[-1,1],r_2_pos[-1,2],color="tab:red",marker="o",s=100,label="Star2")
@@ -127,7 +136,7 @@ m2 = 6.8e24
 
 m3 = 7.3e24
 m4 = 6.8e24
-system1_r1, system1_r2, system1_com = double_star_system (m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, False)
+system1_r1, system1_r2, system1_com = double_star_system (m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, True)
 system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, False)
 
 #------------------------------TOTAL SYSTEM CALCULATION--------------------------------------------
@@ -140,4 +149,4 @@ K2_3 = (earth_sun_v*orbital_period_2)/distance_between_stars2
 
 # #--------------------------------------------------------------------------------------------
 total_system_r1, total_system_r2, total_system_com = double_star_system (m1+m2,m3+m4,system1_com,system2_com, K1_3, K2_3, False)
-plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2)
+#plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2)

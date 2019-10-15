@@ -5,6 +5,8 @@ import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+import orbit_evaluator
+
 #------------------------------BIG LIST OF CONSTANTS--------------------------------------------
 G = 6.67408e-11
 #sun mass
@@ -86,16 +88,22 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
     r_2_pos = r_2_pos - r_com_final
 
     if plot:
+        linear_reg = orbit_evaluator.SLR(r_1_pos)
+        # orbit_evaluator.calc_residual(linear_reg, r_1_pos)
+
         fig=plt.figure(figsize=(10,10))
         ax=fig.add_subplot(111,projection="3d")
 
         ax.plot(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],color="darkblue")
+
+        # #plot linear Regression
+        # ax.plot(*linear_reg,color = 'r')
+
         ax.plot(r_2_pos[:,0],r_2_pos[:,1],r_2_pos[:,2],color="tab:red")
         ax.scatter(r_1_pos[-1,0],r_1_pos[-1,1],r_1_pos[-1,2],color="darkblue",marker="o",s=100,label="Star1")
         ax.scatter(r_2_pos[-1,0],r_2_pos[-1,1],r_2_pos[-1,2],color="tab:red",marker="o",s=100,label="Star2")
         plt.show()
     return r_1_pos, r_2_pos, r_com
-
 
 def plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2):
     fig=plt.figure(figsize=(10,10))
@@ -107,10 +115,6 @@ def plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_syste
     ax.scatter(system1_r1[-1,0] - total_system_r1[-1,0],system1_r1[-1,1] - total_system_r1[-1,1],system1_r1[-1,2] - total_system_r1[-1,2],color="b",marker="o",s=100,label="Star1")
     ax.scatter(system1_r2[-1,0] - total_system_r1[-1,0],system1_r2[-1,1] - total_system_r1[-1,1],system1_r2[-1,2] - total_system_r1[-1,2],color="g",marker="o",s=100,label="Star2")
     # #PLOT SYSTEM 2
-    # ax.plot(system2_r1[:,0],system2_r1[:,1],system2_r1[:,2],color="r")
-    # ax.plot(system2_r2[:,0],system2_r2[:,1],system2_r2[:,2],color="c")
-    # ax.scatter(system2_r1[-1,0],system2_r1[-1,1],system2_r1[-1,2],color="r",marker="X",s=100,label="Star3")
-    # ax.scatter(system2_r2[-1,0],system2_r2[-1,1],system2_r2[-1,2],color="c",marker="X",s=100,label="Star4")
     ax.plot(system2_r1[:,0] + total_system_r1[-1,0],system2_r1[:,1] + total_system_r1[-1,1],system2_r1[:,2] + total_system_r1[-1,2],color="r")
     ax.plot(system2_r2[:,0] + total_system_r1[-1,0],system2_r2[:,1] + total_system_r1[-1,1],system2_r2[:,2] + total_system_r1[-1,2],color="c")
     ax.scatter(system2_r1[-1,0] + total_system_r1[-1,0],system2_r1[-1,1] + total_system_r1[-1,1],system2_r1[-1,2] + total_system_r1[-1,2],color="r",marker="o",s=100,label="Star3")
