@@ -53,9 +53,9 @@ def calculate_2_body (initial_conditions,t,m1,m2, K1, K2):
     return all_derivs
 
 def double_star_system (m1,m2,r1,r2, K1,K2, plot):
-    m1 = m1/earth_mass
-    m2 = m2/earth_mass
-    e = 0.8
+    # m1 = m1/earth_mass
+    # m2 = m2/earth_mass
+    e = 0.5179
     G = 6.67408e-11
     #find position of center of mass
     r_com = ((m1*r1) + (m2*r2))/(m1+m2)
@@ -85,8 +85,6 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
     r_2_pos = r_2_pos - r_com_final
 
     if plot:
-        linear_reg = orbit_evaluator.SLR(r_1_pos)
-
         fig=plt.figure(figsize=(8,8))
         ax=fig.add_subplot(111,projection="3d")
         #ax.margins(0,0.25,0)
@@ -129,24 +127,26 @@ def plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_syste
 
     plt.show()
 
-
 #------------------------------DOUBLE SYSTEM CALCULATIONS--------------------------------------------
-m1 = 7.3e24
-m2 = 6.8e24
+m1 =1.1
+#2.2e+30
+m2 = 0.9
+#1.8e+30
 
 m3 = 7.3e24
 m4 = 6.8e24
 system1_r1, system1_r2, system1_com = double_star_system (m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, True)
-system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, False)
 
-#------------------------------TOTAL SYSTEM CALCULATION--------------------------------------------
-
-#------------------------------MORE CONSTANTS-------------------------------------------------------
-orbital_period_3 = 79.91*365*24*3600*0.51 #in seconds
-distance_between_stars3 = LA.norm(system2_com - system1_com)
-K1_3 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
-K2_3 = (earth_sun_v*orbital_period_2)/distance_between_stars2
-
-# #--------------------------------------------------------------------------------------------
-total_system_r1, total_system_r2, total_system_com = double_star_system (m1+m2,m3+m4,system1_com,system2_com, K1_3, K2_3, False)
-#plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2)
+# system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, False)
+#
+# #------------------------------TOTAL SYSTEM CALCULATION--------------------------------------------
+#
+# #------------------------------MORE CONSTANTS-------------------------------------------------------
+# orbital_period_3 = 79.91*365*24*3600*0.51 #in seconds
+# distance_between_stars3 = LA.norm(system2_com - system1_com)
+# K1_3 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
+# K2_3 = (earth_sun_v*orbital_period_2)/distance_between_stars2
+#
+# # #--------------------------------------------------------------------------------------------
+# total_system_r1, total_system_r2, total_system_com = double_star_system (m1+m2,m3+m4,system1_com,system2_com, K1_3, K2_3, False)
+# #plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_system_r1, total_system_r2)

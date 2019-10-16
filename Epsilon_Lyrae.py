@@ -4,6 +4,7 @@ import scipy
 import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import timeit
 
 import orbit_evaluator
 
@@ -55,9 +56,9 @@ def calculate_2_body (initial_conditions,t,m1,m2, K1, K2):
     all_derivs = scipy.concatenate((r_derivs, v_1_after, v_2_after))
     return all_derivs
 
-def double_star_system (m1,m2,r1,r2, K1,K2, plot):
-    m1 = m1/sun_mass
-    m2 = m2/sun_mass
+def double_star_system (v, m1,m2,r1,r2, K1,K2, plot):
+    # m1 = m1/sun_mass
+    # m2 = m2/sun_mass
     e = 0.8
     G = 6.67408e-11
     #find position of center of mass
@@ -65,10 +66,10 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
 
     #TODO Calculate intial velocity as vector not scalar or predefined vector
     #find intiial velocity
-    v_1_initial = [0.01,0.01,0]
+    v_1_initial = v[0:3]
     #print ((G*m2*(1+e)*LA.norm(r_com - r1))/(np.power(LA.norm(r2 - r1),2)))
     #[0.01,0.01,0]
-    v_2_initial = [-0.05,0,-0.1]
+    v_2_initial = v[3:6]
     #(G*m1*(1+e)*LA.norm(r_com - r2))/(np.power(LA.norm(r2 - r1),2))
     #[-0.05,0,-0.1]
 
@@ -87,10 +88,16 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
     r_1_pos = r_1_pos - r_com_final
     r_2_pos = r_2_pos - r_com_final
 
-    if plot:
-        linear_reg = orbit_evaluator.SLR(r_1_pos)
-        # orbit_evaluator.calc_residual(linear_reg, r_1_pos)
+    #------------------------------------------------------------------------------------------
+    #check if planets actual in orbit
+    linear_reg_score = orbit_evaluator.SLR(r_1_pos)
+    if linear_reg_score < 0.5:
+        print(v_1_initial)
+        print(v_2_initial)
+        print ("\n")
+    #------------------------------------------------------------------------------------------
 
+    if plot:
         fig=plt.figure(figsize=(10,10))
         ax=fig.add_subplot(111,projection="3d")
 
@@ -127,14 +134,26 @@ def plot_total_system(system1_r1, system1_r2, system2_r1, system2_r2,total_syste
     # ax.scatter(total_system_r2[-1,0],total_system_r2[-1,1],total_system_r2[-1,2],color="k",marker="X",s=100,label="Star_System_2")
 
     plt.show()
-#------------------------------DOUBLE SYSTEM CALCULATIONS--------------------------------------------
-m1 = 4.06e+30
-m2 = 3.22e+30
 
-m3 = 4.22e+30
-m4 = 4.3e+30
-system1_r1, system1_r2, system1_com = double_star_system (m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, False)
-system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, True)
+#------------------------------DOUBLE SYSTEM CALCULATIONS--------------------------------------------
+m1 = 2.03
+#4.06e+30
+m2 = 1.61
+#3.22e+30
+
+m3 = 2.11
+#4.22e+30
+m4 = 2.15
+#4.3e+30
+
+possible_vs = orbit_evaluator.velocity_finder_bf()
+# for v in possible_vs:
+    #start = timeit.default_timer()
+v = [0.01,0.01,0,-0.05,0,-0.1]
+system1_r1, system1_r2, system1_com = double_star_system (v,m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, True)
+    #end = timeit.default_timer()
+    #print (str(end-start))
+system2_r1, system2_r2, system2_com = double_star_system (v,m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, False)
 
 #------------------------------TOTAL SYSTEM CALCULATION--------------------------------------------
 #
