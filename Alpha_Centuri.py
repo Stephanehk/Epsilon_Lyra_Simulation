@@ -5,7 +5,7 @@ import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-import orbit_evaluator
+import radial_velocity_evaluator
 
 #------------------------------BIG LIST OF CONSTANTS--------------------------------------------
 G = 6.67408e-11
@@ -15,17 +15,17 @@ earth_mass = 5.972e24
 #velocity of earth around the sun
 earth_sun_v =30000
 #--------------------------------------------------------------------------------------------
-#fix later
-orbital_period_1 = 79.91*365*24*3600*0.51 #in seconds
+
+orbital_period_1 = 79.91*365*24*3600*0.51 #79.9 years in seconds
 distance_between_stars1 = 5.326e+12
 K1_1 = (G*orbital_period_1*sun_mass)/(np.power(distance_between_stars1,2) * earth_sun_v)
 K2_1 = (earth_sun_v*orbital_period_1)/distance_between_stars1
-#--------------------------------------------------------------------------------------------
-orbital_period_2 = 79.91*365*24*3600*0.51 #in seconds
-distance_between_stars2 = 5.326e+12
-K1_2 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
-K2_2 = (earth_sun_v*orbital_period_2)/distance_between_stars2
-#--------------------------------------------------------------------------------------------
+# #--------------------------------------------------------------------------------------------
+# orbital_period_2 = 79.91*365*24*3600*0.51 #in seconds
+# distance_between_stars2 = 5.326e+12
+# K1_2 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
+# K2_2 = (earth_sun_v*orbital_period_2)/distance_between_stars2
+# #--------------------------------------------------------------------------------------------
 def calculate_2_body (initial_conditions,t,m1,m2, K1, K2):
     r1 = initial_conditions[0:3]
     r2 = initial_conditions[3:6]
@@ -72,7 +72,7 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
     initial_conditions = scipy.array([r1,r2, v_1_initial, v_2_initial]).flatten()
 
     #0, number of orbital periods, number of points to calculate
-    t = np.linspace(0,8,500)
+    t = np.linspace(0,1,60)
     #intergate
     res = integrate.odeint(calculate_2_body, initial_conditions, t, args=(m1,m2, K1, K2))
     r_1_pos = res[:,:3]
@@ -89,6 +89,7 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
         ax=fig.add_subplot(111,projection="3d")
         #ax.margins(0,0.25,0)
         ax.plot(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],color="darkblue")
+        star1_rv = radial_velocity_evaluator.evaluate(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],e,orbital_period_1,v_1_initial,r1,m1)
 
         #plot linear Regression
         #ax.plot(*linear_reg,color = 'r')
@@ -132,9 +133,9 @@ m1 =1.1
 #2.2e+30
 m2 = 0.9
 #1.8e+30
-
-m3 = 7.3e24
-m4 = 6.8e24
+#
+# m3 = 7.3e24
+# m4 = 6.8e24
 system1_r1, system1_r2, system1_com = double_star_system (m1,m2,np.array([-0.5,0,0],dtype="float64"),np.array([0.5,0,0],dtype="float64"), K1_1, K2_1, True)
 
 # system2_r1, system2_r2, system2_com = double_star_system (m3,m4,np.array([1.5,0,0],dtype="float64"),np.array([2.5,0,0],dtype="float64"), K1_2, K2_2, False)

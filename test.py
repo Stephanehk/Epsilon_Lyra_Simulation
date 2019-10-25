@@ -1,2 +1,4 @@
-arr = [1,2,3,4,5,6]
-print (arr[0:3])
+import numpy as np
+
+t = np.linspace(0,100,500)
+print (len(t))
