@@ -13,6 +13,9 @@ def lists2dict(list1, list2):
         dictionary[val1] = val2
     return dictionary
 
+def rad2degrees(rad):
+    return (180*rad)/3.14
+
 def get_semi_major_acess (x,y,z):
     x2yz = lists2dict(x,np.column_stack((y,z)))
     y2xz = lists2dict(y,np.column_stack((x,z)))
@@ -48,13 +51,30 @@ def get_eccentricity_vector(v,r,m):
     return p1 - p2
 
 def get_true_anamoly(e_v,v,r):
-    return np.arccos(np.dot(e_v,r)/np.linalg.norm(e_v-r))
+    return rad2degrees(np.arccos(np.dot(e_v,r)/np.linalg.norm(e_v-r)))
 
-def evaluate (x,y,z,e,P,v,r,m):
+def get_argument_of_periastron(h,e_v):
+    #https://en.wikipedia.org/wiki/Argument_of_periapsis
+    #vector pointing towards ascending node
+    n = h*np.array([1,0,0])
+    return rad2degrees(np.arccos(np.dot(n,e_v)/(np.linalg.norm(n)*np.linalg.norm(e_v))))
+
+def get_inclination(r,v,m):
+    #orbital momentum vector
+    h = (np.power(np.linalg.norm(r),2)*m) * ((r*v)/np.power(np.linalg.norm(r),2))
+
+    return rad2degrees(np.arccos(h[2]/np.linalg.norm(h))), h
+
+def evaluate (x,y,z,e,P,v_all,r,m):
     #devide major access by 2 to get semi major access
     a =  (get_semi_major_acess (x,y,z))/2
-    #get eccentricity vector
-    e_v = get_eccentricity_vector(v,r,m)
-    #find true anomoly
-    theta = get_true_anamoly(e_v,v,r)
-    print (a)
+    for v in v_all:
+        #get eccentricity vector
+        e_v = get_eccentricity_vector(v,r,m)
+        #find true anomoly
+        theta = get_true_anamoly(e_v,v,r)
+        #find inclination
+        i, h = get_inclination(r,m,v)
+        #find argument of periaston
+        omega = get_argument_of_periastron(h, e_v)
+        r_v = radial_velocity(e,a,i,P, theta, omega)

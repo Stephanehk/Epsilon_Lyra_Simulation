@@ -26,6 +26,8 @@ K2_1 = (earth_sun_v*orbital_period_1)/distance_between_stars1
 # K1_2 = (G*orbital_period_2*sun_mass)/(np.power(distance_between_stars2,2) * earth_sun_v)
 # K2_2 = (earth_sun_v*orbital_period_2)/distance_between_stars2
 # #--------------------------------------------------------------------------------------------
+velocities_1 = []
+velocities_2 = []
 def calculate_2_body (initial_conditions,t,m1,m2, K1, K2):
     r1 = initial_conditions[0:3]
     r2 = initial_conditions[3:6]
@@ -46,6 +48,8 @@ def calculate_2_body (initial_conditions,t,m1,m2, K1, K2):
     v_2_after = np.array(v_2_after, dtype="float64")
     r_1_after = np.array(r_1_after, dtype="float64")
     r_2_after = np.array(r_2_after, dtype="float64")
+    velocities_1.append(v_1_after)
+    velocities_2.append(v_2_after)
 
     #concatenate everything into big happy array
     r_derivs = scipy.concatenate((r_1_after, r_2_after))
@@ -89,8 +93,7 @@ def double_star_system (m1,m2,r1,r2, K1,K2, plot):
         ax=fig.add_subplot(111,projection="3d")
         #ax.margins(0,0.25,0)
         ax.plot(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],color="darkblue")
-        star1_rv = radial_velocity_evaluator.evaluate(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],e,orbital_period_1,v_1_initial,r1,m1)
-
+        star1_rv = radial_velocity_evaluator.evaluate(r_1_pos[:,0],r_1_pos[:,1],r_1_pos[:,2],e,orbital_period_1,velocities_1,r1,m1)
         #plot linear Regression
         #ax.plot(*linear_reg,color = 'r')
 
